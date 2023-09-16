@@ -159,7 +159,7 @@ def atualizar_pessoa(user_id):
   except Exception as e:
     return jsonify({'error': str(e)}), 500
 
-@pessoa.route('api/v1/pessoas/<int:user_id>', methods=['DELETE'])
+@pessoa.route('/api/v1/pessoas/<int:user_id>', methods=['DELETE'])
 def deletar_pessoa(user_id):
   try:
     # Conectando ao banco de dados

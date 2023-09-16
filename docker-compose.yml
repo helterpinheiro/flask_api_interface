@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: challenge_v
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/usr/app
+    network_mode: host
