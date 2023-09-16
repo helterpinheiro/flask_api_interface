@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 import mysql.connector
 from database.config import DB_CONFIG
-from database.querys import SELECT_ALL_PESSOA, SELECT_PESSOA_ID, INSERT_PESSOA, SELECT_PESSOA_CPF, SELECT_PESSOA_RG
+from database.querys import SELECT_ALL_PESSOA, SELECT_PESSOA_ID, INSERT_PESSOA, SELECT_PESSOA_CPF, SELECT_PESSOA_RG, UPDATE_PESSOA
 from utils.varificador_cpf import verificando_cpf
 from dotenv import load_dotenv
 
@@ -15,25 +15,25 @@ def connect_db():
 
 @pessoa.route('/api/v1/pessoas', methods=['GET'])
 def listar_pessoas():
-    try:
-        # Conectando ao banco de dados
-        connection = connect_db()
-        cursor = connection.cursor(dictionary=True)
+  try:
+      # Conectando ao banco de dados
+      connection = connect_db()
+      cursor = connection.cursor(dictionary=True)
 
-        # Executando busca
-        cursor.execute(SELECT_ALL_PESSOA)
+      # Executando busca
+      cursor.execute(SELECT_ALL_PESSOA)
 
-        # Recebendo todos os registros e adicionando em uma lista
-        pessoas = cursor.fetchall()
+      # Recebendo todos os registros e adicionando em uma lista
+      pessoas = cursor.fetchall()
 
-        # Fechando o cursor e a conexão
-        cursor.close()
-        connection.close()
+      # Fechando o cursor e a conexão
+      cursor.close()
+      connection.close()
 
-        return jsonify({'pessoas': pessoas})
+      return jsonify({'pessoas': pessoas})
 
-    except Exception as e:
-        return jsonify({'error': str(e)})
+  except Exception as e:
+      return jsonify({'error': str(e)})
 
 @pessoa.route('/api/v1/pessoas/<int:user_id>', methods=['GET'])
 def buscar_pessoa_id(user_id):
@@ -97,7 +97,7 @@ def criar_pessoa():
         })
 
       # Verificando se ja existe uma pessoa com o mesmo RG
-      cursor.execute(SELECT_PESSOA_CPF, (data['rg'],))
+      cursor.execute(SELECT_PESSOA_RG, (data['rg'],))
       pessoa_existente_rg = cursor.fetchone()
 
       if pessoa_existente_rg:
@@ -122,3 +122,44 @@ def criar_pessoa():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@pessoa.route('/api/v1/pessoas/<int:user_id>', methods=['PUT'])
+def atualizar_pessoa(user_id):
+  try:
+    data = request.json
+
+    # Conectando ao banco de dados
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    # Verificando se ja existe no banco de dados
+    cursor.execute(SELECT_PESSOA_ID, (user_id,))
+    pessoa_existente_id = cursor.fetchone()
+    cursor.close()
+    connection.close()
+
+    if not pessoa_existente_id:
+        return jsonify({'message': 'Pessoa não encontrada'}), 404
+    
+    # Verificando se 'nome' e 'funcao' estão presentes nos dados solicitados
+    if 'nome' not in data or 'funcao' not in data:
+        return jsonify({'error': 'Os campos "nome" e "funcao" são obrigatórios'}), 400
+    
+    # Conectando ao banco de dados
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    # Atualizando nome e funcao no banco de dados
+    update_pessoa = (data['nome'], data['funcao'], user_id)
+    cursor.execute(UPDATE_PESSOA, update_pessoa)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    return jsonify({'message': 'Pessoa atualizada com sucesso'})
+
+  except Exception as e:
+    return jsonify({'error': str(e)}), 500
+
+
+

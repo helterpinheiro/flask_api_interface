@@ -14,3 +14,6 @@ SELECT_PESSOA_CPF = """
 SELECT_PESSOA_RG = """
   SELECT id_pessoa FROM pessoas WHERE rg = %s
 """
+UPDATE_PESSOA = """
+  UPDATE pessoas SET nome = %s, funcao = %s WHERE id_pessoa = %s
+"""
