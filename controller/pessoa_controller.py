@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 import mysql.connector
 from database.config import DB_CONFIG
-from database.querys import SELECT_ALL_PESSOA, SELECT_PESSOA_ID, INSERT_PESSOA, SELECT_PESSOA_CPF, SELECT_PESSOA_RG, UPDATE_PESSOA
+from database.querys import SELECT_ALL_PESSOA, SELECT_PESSOA_ID, INSERT_PESSOA, SELECT_PESSOA_CPF, SELECT_PESSOA_RG, UPDATE_PESSOA, DELETE_PESSOA
 from utils.varificador_cpf import verificando_cpf
 from dotenv import load_dotenv
 
@@ -135,19 +135,17 @@ def atualizar_pessoa(user_id):
     # Verificando se ja existe no banco de dados
     cursor.execute(SELECT_PESSOA_ID, (user_id,))
     pessoa_existente_id = cursor.fetchone()
-    cursor.close()
-    connection.close()
 
     if not pessoa_existente_id:
-        return jsonify({'message': 'Pessoa não encontrada'}), 404
+      cursor.close()
+      connection.close()
+      return jsonify({'message': 'Pessoa não encontrada'}), 404
     
     # Verificando se 'nome' e 'funcao' estão presentes nos dados solicitados
     if 'nome' not in data or 'funcao' not in data:
-        return jsonify({'error': 'Os campos "nome" e "funcao" são obrigatórios'}), 400
-    
-    # Conectando ao banco de dados
-    connection = connect_db()
-    cursor = connection.cursor()
+      cursor.close()
+      connection.close()
+      return jsonify({'error': 'Os campos "nome" e "funcao" são obrigatórios'}), 400
 
     # Atualizando nome e funcao no banco de dados
     update_pessoa = (data['nome'], data['funcao'], user_id)
@@ -161,5 +159,29 @@ def atualizar_pessoa(user_id):
   except Exception as e:
     return jsonify({'error': str(e)}), 500
 
+@pessoa.route('api/v1/pessoas/<int:user_id>', methods=['DELETE'])
+def deletar_pessoa(user_id):
+  try:
+    # Conectando ao banco de dados
+    connection = connect_db()
+    cursor = connection.cursor()
 
+    # Verificando se ja existe no banco de dados
+    cursor.execute(SELECT_PESSOA_ID, (user_id,))
+    pessoa_existente_id = cursor.fetchone()
 
+    if not pessoa_existente_id:
+      cursor.close()
+      connection.close()
+      return jsonify({'message': 'Pessoa não encontrada'}), 404
+
+    # Excluindo pessoa do banco de dados
+    cursor.execute(DELETE_PESSOA, (user_id,))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    return jsonify({'message': 'Pessoa excluída com sucesso'})
+
+  except Exception as e:
+    return jsonify({'error': str(e)}), 500

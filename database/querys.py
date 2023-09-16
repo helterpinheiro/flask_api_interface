@@ -17,3 +17,6 @@ SELECT_PESSOA_RG = """
 UPDATE_PESSOA = """
   UPDATE pessoas SET nome = %s, funcao = %s WHERE id_pessoa = %s
 """
+DELETE_PESSOA = """
+  DELETE FROM pessoas WHERE id_pessoa = %s
+"""
