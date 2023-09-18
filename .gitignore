@@ -7,6 +7,8 @@ env/
 venv/
 .venv/
 env*
+.env.local
+.env.*.local
 dist/
 build/
 *.egg
@@ -17,6 +19,13 @@ build/
 .idea/
 docs/_build/
 .vscode
+node_modules/
+/dist/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Coverage reports
 htmlcov/

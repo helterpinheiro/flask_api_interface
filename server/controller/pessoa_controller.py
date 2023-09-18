@@ -3,6 +3,7 @@ import mysql.connector
 from database.config import DB_CONFIG
 from database.querys import SELECT_ALL_PESSOA, SELECT_PESSOA_ID, INSERT_PESSOA, SELECT_PESSOA_CPF, SELECT_PESSOA_RG, UPDATE_PESSOA, DELETE_PESSOA
 from utils.varificador_cpf import verificando_cpf
+from utils.formatar_data import formatar_data
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,7 +19,7 @@ def listar_pessoas():
   try:
       # Parâmetros da página
       page = int(request.args.get('page', 1))
-      per_page = int(request.args.get('per_page', 10))
+      per_page = int(request.args.get('per_page', 8))
 
       # Calcular o índice inicial e final para a consulta
       start_index = (page - 1) * per_page
@@ -33,6 +34,13 @@ def listar_pessoas():
 
       # Recebendo todos os registros e adicionando em uma lista
       pessoas = cursor.fetchall()
+
+      # verificando se pessoas retornou algum dado
+      # if len(pessoas)>0:
+      #   print('alo')
+      #   for pessoa in pessoas:
+      #       print(pessoa['data_admissao'])
+      #       pessoa['data_admissao'] = formatar_data(pessoa['data_admissao'])
 
       # Fechando o cursor e a conexão
       cursor.close()
