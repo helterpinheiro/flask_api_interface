@@ -156,6 +156,14 @@ def atualizar_pessoa(user_id):
       cursor.close()
       connection.close()
       return jsonify({'message': 'Pessoa não encontrada'}), 404
+  
+    # Verificando se o CPF tem uma quantidade de caracteres valida
+    cpf = verificando_cpf(data['cpf'])
+    print(cpf)
+    if cpf == False:
+      return jsonify({
+        'error': 'Informe um CPF válido'
+      })
     
     # Verificando se 'nome' e 'funcao' estão presentes nos dados solicitados
     campos_obrigatorios = ['nome', 'rg', 'cpf', 'data_nascimento', 'data_admissao', 'funcao']
