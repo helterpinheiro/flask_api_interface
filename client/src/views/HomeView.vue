@@ -24,6 +24,7 @@ export default {
       page: 1,
       perPage: 8,
       totalPages: 3,
+      exibirModal: false,
     };
   },
   methods: {

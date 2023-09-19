@@ -1,7 +1,7 @@
 def verificando_cpf(cpf):
     # Removendo os caracteres que não sao dígitos
     cpf = ''.join(filter(str.isdigit, cpf))
-
+    print(cpf)
     # Verificando se todos os números são iguais
     if len(set(cpf)) == 1:
         return False

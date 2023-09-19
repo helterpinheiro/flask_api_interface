@@ -12,8 +12,17 @@
       >
       <span class="funcao">{{ pessoa.funcao }}</span>
     </div>
-    <button @click="editarPessoa(pessoa.id_pessoa)">Editar</button>
-    <button @click="excluirPessoa(pessoa.id_pessoa)">Excluir</button>
+    <div class="button">
+      <button class="edit" @click="editarPessoa(pessoa.id_pessoa)">
+        <ion-icon name="create-outline"></ion-icon>Editar
+      </button>
+      <button class="vermais" @click="exibirInfo(pessoa.id_pessoa)">
+        <ion-icon name="eye-outline"></ion-icon>Ver mais
+      </button>
+      <button class="delete" @click="excluirPessoa(pessoa.id_pessoa)">
+        <ion-icon name="trash-outline"></ion-icon>Excluir
+      </button>
+    </div>
   </div>
 </template>
 
@@ -21,6 +30,9 @@
 export default {
   name: "HelloWorld",
   props: ["pessoa"],
+  data() {
+    return { exibirDetalhes: false };
+  },
   methods: {
     formatarData(data) {
       const options = { year: "numeric", month: "2-digit", day: "2-digit" };
@@ -29,6 +41,29 @@ export default {
 
     editarPessoa(id) {
       this.$router.push({ name: "editar", params: { id } });
+    },
+
+    excluirPessoa(id) {
+      const apiUrl = `http://localhost:5000/api/v1/pessoas/${id}`;
+      fetch(apiUrl, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            this.$router.go();
+          } else {
+            console.error("Erro ao excluir pessoa.");
+          }
+        })
+        .catch((error) => {
+          console.error(
+            "Erro ao enviar solicitação para excluir pessoa",
+            error
+          );
+        });
+    },
+    exibirInfo(id) {
+      this.$router.push({ name: "info", params: { id } });
     },
   },
 };
@@ -49,6 +84,42 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.pessoa .button {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.pessoa .button .edit {
+  background: #05c3dd;
+  color: white;
+  border: none;
+  font-size: 17px;
+  display: inline-block;
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+}
+
+.pessoa .button .delete {
+  background: #d10808;
+  color: white;
+  border: none;
+  font-size: 17px;
+  display: inline-block;
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+}
+
+.pessoa .button .vermais {
+  background: #e4d50d;
+  color: white;
+  border: none;
+  font-size: 17px;
+  display: inline-block;
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
 }
 
 .pessoa .img {

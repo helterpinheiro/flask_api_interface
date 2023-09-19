@@ -15,7 +15,7 @@ SELECT_PESSOA_RG = """
   SELECT id_pessoa FROM pessoas WHERE rg = %s
 """
 UPDATE_PESSOA = """
-  UPDATE pessoas SET nome = %s, funcao = %s WHERE id_pessoa = %s
+  UPDATE pessoas SET nome = %s, funcao = %s, rg = %s, cpf = %s, data_admissao = %s, data_nascimento = %s WHERE id_pessoa = %s
 """
 DELETE_PESSOA = """
   DELETE FROM pessoas WHERE id_pessoa = %s

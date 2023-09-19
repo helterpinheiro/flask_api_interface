@@ -105,8 +105,8 @@ def criar_pessoa():
         })
       
       # Verificando se o CPF tem uma quantidade de caracteres valida
-      cpf = verificando_cpf()
-      
+      cpf = verificando_cpf(data['cpf'])
+      print(cpf)
       if cpf == False:
         return jsonify({
           'error': 'Informe um CPF válido'
@@ -158,13 +158,16 @@ def atualizar_pessoa(user_id):
       return jsonify({'message': 'Pessoa não encontrada'}), 404
     
     # Verificando se 'nome' e 'funcao' estão presentes nos dados solicitados
-    if 'nome' not in data or 'funcao' not in data:
-      cursor.close()
-      connection.close()
-      return jsonify({'error': 'Os campos "nome" e "funcao" são obrigatórios'}), 400
+    campos_obrigatorios = ['nome', 'rg', 'cpf', 'data_nascimento', 'data_admissao', 'funcao']
+    # Verificando os campos obrigatorios
+    for campo in campos_obrigatorios:
+      if campo not in data:
+          return jsonify({
+            'error': f'O campo {campo} é obrigatório'
+          })
 
     # Atualizando nome e funcao no banco de dados
-    update_pessoa = (data['nome'], data['funcao'], user_id)
+    update_pessoa = (data['nome'], data['funcao'], data['rg'], data['cpf'], data['data_admissao'], data['data_nascimento'], user_id)
     cursor.execute(UPDATE_PESSOA, update_pessoa)
     connection.commit()
     cursor.close()
