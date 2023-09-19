@@ -2,9 +2,12 @@
   <div>
     <PersonList :pessoas="pessoas" />
     <div class="">
-      <button @click="anteriorPagina" :disabled="page === 1">Anterior</button>
+      <button @click="criarFuncionario">Criar funcionário</button>
+      <button @click="anteriorPagina" :disabled="page === 1">
+        Página Anterior
+      </button>
       <button @click="proximaPagina" :disabled="page === totalPages">
-        Próxima
+        Próxima Página
       </button>
     </div>
   </div>
@@ -50,6 +53,10 @@ export default {
           console.log(this.pessoas);
         })
       );
+    },
+
+    criarFuncionario() {
+      this.$router.push({ name: "create" });
     },
   },
   mounted() {

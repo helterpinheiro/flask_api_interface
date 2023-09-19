@@ -92,7 +92,7 @@ body {
   justify-content: center;
 }
 
-.pessoa .button .edit {
+.pessoa .edit {
   background: #05c3dd;
   color: white;
   border: none;
@@ -102,7 +102,7 @@ body {
   cursor: pointer;
 }
 
-.pessoa .button .delete {
+.pessoa .delete {
   background: #d10808;
   color: white;
   border: none;
@@ -112,7 +112,7 @@ body {
   cursor: pointer;
 }
 
-.pessoa .button .vermais {
+.pessoa .vermais {
   background: #e4d50d;
   color: white;
   border: none;

@@ -2,36 +2,37 @@
   <div class="editar-pessoa">
     <!-- Card de edição de pessoa -->
     <div class="card">
-      <h2>Editar {{ pessoaEditada.nome }}</h2>
-      <form @submit.prevent="salvarEdicao">
+      <h2>Criar funcionário</h2>
+      <form @submit.prevent="salvarPessoa">
         <!-- Campos do formulário aqui -->
         <div>
           <label class="label" for="nome">Nome:</label>
-          <input type="text" id="nome" v-model="pessoaEditada.nome" required />
+          <input type="text" id="nome" v-model="pessoaCriada.nome" required />
         </div>
         <div>
           <label class="label" for="funcao">Função:</label>
           <input
             type="text"
             id="funcao"
-            v-model="pessoaEditada.funcao"
+            v-model="pessoaCriada.funcao"
             required
           />
         </div>
         <div>
           <label class="label" for="rg">RG:</label>
-          <input type="text" id="rg" v-model="pessoaEditada.rg" />
+          <input type="text" id="rg" v-model="pessoaCriada.rg" required />
         </div>
         <div>
           <label class="label" for="cpf">CPF:</label>
-          <input type="text" id="cpf" v-model="pessoaEditada.cpf" />
+          <input type="text" id="cpf" v-model="pessoaCriada.cpf" required />
         </div>
         <div>
           <label class="label" for="data_admissao">Data de Admissão:</label>
           <input
             type="date"
             id="data_admissao"
-            v-model="pessoaEditada.data_admissao"
+            v-model="pessoaCriada.data_admissao"
+            required
           />
         </div>
         <div>
@@ -39,12 +40,13 @@
           <input
             type="date"
             id="data_nascimento"
-            v-model="pessoaEditada.data_nascimento"
+            v-model="pessoaCriada.data_nascimento"
+            required
           />
         </div>
         <!-- Outros campos do formulário -->
-        <button class="button2" type="submit">Salvar</button>
-        <button class="button2" @click="voltarParaHome">Cancelar</button>
+        <button class="butao" type="submit">Salvar</button>
+        <button class="butao" @click="voltarParaHome">Cancelar</button>
         <!-- Alerta de erro -->
         <div v-if="erro" class="alert alert-danger">
           {{ erro }}
@@ -63,7 +65,7 @@ export default {
     return {
       sucesso: null,
       erro: null,
-      pessoaEditada: {
+      pessoaCriada: {
         nome: "",
         funcao: "",
         rg: "",
@@ -74,9 +76,6 @@ export default {
       },
     };
   },
-  mounted() {
-    this.carregarPessoa();
-  },
   methods: {
     formatarData(data) {
       const dataPessoa = new Date(data);
@@ -85,52 +84,35 @@ export default {
       const ano = dataPessoa.getFullYear();
       return `${ano}-${mes}-${dia}`;
     },
-    carregarPessoa() {
-      const pessoaId = this.$route.params.id;
-      const apiUrl = `http://localhost:5000/api/v1/pessoas/${pessoaId}`;
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          // this.pessoaEditada = data.pessoa;
-          data.pessoa.data_admissao = this.formatarData(
-            data.pessoa.data_admissao
-          );
-          data.pessoa.data_nascimento = this.formatarData(
-            data.pessoa.data_nascimento
-          );
-          this.pessoaEditada = data.pessoa;
-          console.log(this.pessoaEditada);
-        });
-    },
-    salvarEdicao() {
-      const pessoaId = this.$route.params.id;
-      const apiUrl = `http://localhost:5000/api/v1/pessoas/${pessoaId}`;
-      console.log("PESSOA EDITADA->", this.pessoaEditada);
+    salvarPessoa() {
+      const apiUrl = `http://localhost:5000/api/v1/pessoas`;
       fetch(apiUrl, {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.pessoaEditada),
+        body: JSON.stringify(this.pessoaCriada),
       })
         .then((response) => {
+          console.log(this.pessoaCriada);
           if (response.ok) {
             this.erro = null;
-            this.sucesso = "Funcionário editado com sucesso!";
+            this.sucesso = "Funcionário criado com sucesso!";
             this.$router.push({ name: "home" });
           } else {
-            this.erro = "Erro ao atualizar o Funcionário.";
+            console.error("Erro ao criar a pessoa.");
             this.sucesso = null;
-            console.error("Erro ao atualizar a pessoa.");
+            this.erro = "Erro ao criar a pessoa";
           }
         })
         .catch((error) => {
-          this.erro = "Erro ao atualizar o Funcionário.";
-          console.error("Erro ao enviar a solicitação de edição", error);
+          console.error("Erro ao enviar a solicitação de criação", error);
+          this.sucesso = null;
+          this.erro = "Erro ao criar a pessoa";
         });
     },
     voltarParaHome() {
-      this.$router.push({ name: "home" }); // Navegue de volta para a página inicial
+      this.$router.push({ name: "home" });
     },
   },
 };
@@ -169,7 +151,7 @@ label {
 }
 
 input,
-.button2 {
+.butao {
   margin: 5px 0;
   padding: 10px;
   width: 100%;
@@ -177,7 +159,7 @@ input,
   border-radius: 5px;
 }
 
-.button2 {
+.butao {
   background: #007bff;
   color: #fff;
   cursor: pointer;
