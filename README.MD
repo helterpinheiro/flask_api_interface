@@ -3,7 +3,6 @@
 ### StackHolders
 - Hélter Pinheiro
 - Desenvolvedor
-- Contato: [helterpinheiro@gmail.com](helterpinheiro@gmail.com)
 
 ### Ferramentas e Bibliotecas utilizadas
 #### API
